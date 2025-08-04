@@ -47,11 +47,12 @@ export default function AppRoutes() {
         <Route path="/community" element={<CommunityPage />} />
         <Route path="/product/:id" element={<ProductDetail />} />
         <Route path="/program" element={<ProgramsPage />} />
-        <Route path="/profile/:username" element={<ProfilePage />} />
-        <Route path="/faq" element={<FAQPage />} /> 
+        <Route path="/profile/:name" element={<ProfilePage />} />
+
+        <Route path="/faq" element={<FAQPage />} />
         <Route path="/post" element={<PostPage />} />
         <Route path="/account-settings" element={<AccountSettings />} />
-        
+
       </Route>
 
       {/* Admin */}

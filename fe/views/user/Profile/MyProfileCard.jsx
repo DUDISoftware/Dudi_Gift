@@ -21,7 +21,7 @@ const MyProfileCard = ({ user }) => {
         <div className="absolute -bottom-12 left-1/2 -translate-x-1/2 sm:left-6 sm:translate-x-0 w-24 h-24 sm:w-32 sm:h-32 z-20">
           <div className="relative w-full h-full rounded-full border-2 border-green-600 overflow-hidden">
             <img
-              src={user.avatar}
+             src={user.avatar?.url}
               alt="Avatar"
               className="w-full h-full object-cover"
             />
@@ -30,16 +30,18 @@ const MyProfileCard = ({ user }) => {
       </div>
 
       <div className="pt-20 sm:pt-24 px-4 sm:px-6 w-full text-center sm:text-left">
-        <h2 className="text-xl font-bold text-green-700 sm:text-left">HIKO</h2>
+        <h2 className="text-xl font-bold text-green-700 sm:text-left">
+          {user.name}
+        </h2>
 
         <div className="flex justify-center sm:justify-start gap-6 mt-1 mb-4 text-green-600 font-medium text-sm">
           <span className="flex items-center gap-1">
             <img src={Followers} alt="Followers" className="w-4 h-4" />
-            312
+            {user.followers || 0}
           </span>
           <span className="flex items-center gap-1">
             <img src={Projects} alt="Projects" className="w-4 h-4" />
-            48
+            {user.products?.length || 0}
           </span>
         </div>
 
@@ -60,19 +62,19 @@ const MyProfileCard = ({ user }) => {
         <div className="text-left text-sm text-black space-y-2">
           <p className="flex items-center gap-2">
             <img src={MsgIcon} className="w-4 h-4" alt="Chat" />
-            Phản hồi chat: 95% (Trong 18 phút)
+            Phản hồi chat: {user.responseRate || '95%'} (Trong {user.responseTime || '18 phút'})
           </p>
           <p className="flex items-center gap-2">
             <img src={CalendarIcon} className="w-4 h-4" alt="Join" />
-            Đã tham gia: 1 ngày
+            Đã tham gia: {user.joinedDays || '1 ngày'}
           </p>
           <p className="flex items-center gap-2">
             <img src={ParticipateIcon} className="w-4 h-4" alt="Activity" />
-            Đã tham gia: 1 ngày
+            Đã tham gia: {user.joinedDays || '1 ngày'}
           </p>
           <p className="flex items-center gap-2">
             <img src={MapIcon} className="w-4 h-4" alt="Location" />
-            Địa chỉ: Quận 1 - TP HCM
+            Địa chỉ: {user.location || 'Chưa cập nhật'}
           </p>
         </div>
 

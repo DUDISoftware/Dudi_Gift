@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { userService } from '../../src/services/userService';
 import FB from '../../src/assets/img/FB.png';
 import GG from '../../src/assets/img/Google.png';
 import Eye from '../../src/assets/img/Eye.png';
 import Eye1 from '../../src/assets/img/eye1.png';
+import { authService } from '../../src/services/authService';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -13,15 +13,16 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const result = userService.login(username, password);
-    if (result.success) {
-      navigate('/');
-    } else {
-      setError(result.message);
-    }
-  };
+  const handleSubmit = async (e) => {
+  e.preventDefault();
+  const result = await authService.login(username, password);
+  if (result.success) {
+    navigate('/');
+  } else {
+    setError(result.message);
+  }
+};
+
 
   const handleGoogleLogin = () => {
     alert('Google login click');
