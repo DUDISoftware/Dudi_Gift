@@ -4,7 +4,7 @@ import IconMessage from '../../assets/img/icon-message.png';
 import IconForward from '../../assets/img/icon-forward.png';
 import IconBookmark from '../../assets/img/icon-bookmark.png';
 
-const PostCard = ({ post, onClick }) => {
+const PostCard = ({ post, onClick, onToggleLike }) => {
   const images = post.images || [];
 
   return (
@@ -66,9 +66,17 @@ const PostCard = ({ post, onClick }) => {
 
       <div className="flex items-center justify-between text-gray-600 text-sm border-t pt-3">
         <div className="flex items-center gap-4">
-          <div className="flex items-center gap-1">
-            <img src={IconLike} alt="like" className="w-7 h-7" />
-            {post.likes}
+          <div
+            className={`flex items-center gap-1 px-2 py-1 rounded-full text-sm cursor-pointer transition ${
+              post.liked ? 'bg-green-600 text-white' : 'bg-white text-gray-700'
+            }`}
+            onClick={(e) => {
+              e.stopPropagation();
+              onToggleLike?.();
+            }}
+          >
+            <img src={IconLike} alt="like" className="w-5 h-5" />
+            {post.likeCount}
           </div>
           <div className="flex items-center gap-1">
             <img src={IconMessage} alt="comment" className="w-7 h-7" />

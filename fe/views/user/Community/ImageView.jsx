@@ -40,7 +40,6 @@ const ImageView = ({ images, selectedIndex, setSelectedIndex }) => {
           )}
         </div>
       )}
-
       <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-2 sm:gap-4 px-2 sm:px-4 py-1 sm:py-2">
         <button onClick={() => setSelectedIndex((prev) => (prev - 1 + images.length) % images.length)}>
           <img src={IconPrev} alt="prev" className="w-6 h-6 sm:w-7 sm:h-7" />

@@ -5,7 +5,7 @@ import Logo from '../../src/assets/img/logo_1.png';
 const AuthLayout = () => {
   return (
     <div className="flex flex-col md:flex-row min-h-screen">
-      <div className="w-full md:w-2/3 flex items-center justify-center bg-white px-4 py-6">
+      <div className="w-full md:w-2/3 flex items-center justify-center bg-[#FFFFFF] px-4 py-6">
         <Outlet />
       </div>
 
