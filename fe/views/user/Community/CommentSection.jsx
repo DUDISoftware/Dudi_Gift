@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import IconLike from '../../../src/assets/img/LikeIcon.png';
+import IconLike from '../../../src/assets/img/icon-like.png';
 import IconMessage from '../../../src/assets/img/Comment.png';
 import IconForward from '../../../src/assets/img/IconShare.png';
 import CommentList from './CommentList';
 
-const CommentSection = ({ post }) => {
+const CommentSection = ({ post, onToggleLike }) => {
   const [comment, setComment] = useState('');
   const [comments, setComments] = useState([
     {
@@ -50,9 +50,14 @@ const CommentSection = ({ post }) => {
 
           <div className="border-t border-[#4CAF50] my-3" />
           <div className="flex justify-evenly text-sm items-center mb-2 px-1">
-            <div className="flex items-center gap-1 text-xs text-white bg-[#4CAF50] px-4 py-1 rounded-full shadow">
-              <img src={IconLike} alt="like" className="w-3 h-3" />
-              {post.likes}
+            <div
+              className={`flex items-center gap-1 text-xs px-4 py-1 rounded-full ${
+                post.liked ? 'bg-green-600 text-white' : 'bg-[#E8F5E9] text-gray-800'
+              }`}
+              onClick={onToggleLike}
+            >
+              <img src={IconLike} alt="like" className="w-4 h-4" />
+              {post.likeCount}
             </div>
             <div className="flex items-center gap-1 text-gray-700 text-xs">
               <img src={IconMessage} alt="comment" className="w-4 h-4" />
@@ -76,7 +81,13 @@ const CommentSection = ({ post }) => {
           </div>
 
           <div className="mt-auto">
-            <div className="border border-gray-400 bg-[#3A3B3C] rounded-xl px-3 py-1 flex items-start">
+          <div className="flex items-start gap-2">
+            <img
+              src={post.user.avatar}
+              alt="avatar"
+              className="w-6 h-6 rounded-full mt-1"
+            />
+            <div className="flex-1 border border-gray-400 bg-[#3A3B3C] rounded-xl px-3 py-1">
               <textarea
                 placeholder="Viết bình luận..."
                 rows={1}
@@ -91,6 +102,8 @@ const CommentSection = ({ post }) => {
                 className="w-full bg-transparent resize-none text-white text-xs placeholder-gray-400 outline-none border-none"
               />
             </div>
+          </div>
+
             <p className="text-[8px] text-[#4CAF50] ml-2 mt-1">Nhấn Enter để đăng</p>
           </div>
         </div>

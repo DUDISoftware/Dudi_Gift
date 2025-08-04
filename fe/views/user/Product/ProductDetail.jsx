@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { productService } from '../../../src/services/productService';
 import { userService } from '../../../src/services/userService';
 import GiftsByUser from './GiftsByUser';
+import HeartFilled from '../../../src/assets/img/HeartFilled.png';
 import SimilarProducts from './SimilarProducts';
 import Avatar from '../../../src/assets/img/avatar_1.png';
 import Chat from '../../../src/assets/img/chat2.png';
@@ -22,11 +23,15 @@ const ProductDetail = () => {
   const [selectedImage, setSelectedImage] = useState(imageList[0]);
   const [showSuccess, setShowSuccess] = useState(false);
   const [showFailure, setShowFailure] = useState(false);
+  const [isFavorited, setIsFavorited] = useState(false);
 
   const [requestTime] = useState(() => {
     const now = new Date();
     return now.toLocaleTimeString('vi-VN') + ' ngày ' + now.toLocaleDateString('vi-VN');
   });
+    const handleToggleFavorite = () => {
+      setIsFavorited((prev) => !prev);
+    };
 
   if (!product) return <div className="p-6">Sản phẩm không tồn tại</div>;
 
@@ -75,10 +80,24 @@ const ProductDetail = () => {
             </div>
             <div>
               <h1 className="text-2xl font-bold mb-2">{product.name}</h1>
-              <div className="flex items-center gap-2 text-sm text-gray-700 mb-3">
-                <img src={Heart} alt="Yêu thích" className="w-4 h-4" />
-                <span>Thêm vào yêu thích</span>
-              </div>
+            <div onClick={handleToggleFavorite} className="flex items-center gap-2 cursor-pointer transition my-2">
+              {isFavorited ? (
+                <img
+                  src={HeartFilled}
+                  alt="heart-filled"
+                  className="w-5 h-5"
+                />
+              ) : (
+                <img
+                  src={Heart}
+                  alt="heart-outline"
+                  className="w-4 h-4" 
+                />
+              )}
+              <span className={`text-sm ${isFavorited ? 'text-green-600 font-medium' : 'text-gray-700'}`}>
+                {isFavorited ? 'Đã thêm vào yêu thích' : 'Thêm vào yêu thích'}
+              </span>
+            </div>
               <div className="flex flex-wrap items-center gap-2 mb-4">
                 <span className="text-xs font-medium bg-[#D1FAE5] text-[#047857] px-2 py-1 rounded-full">
                   {product.category}

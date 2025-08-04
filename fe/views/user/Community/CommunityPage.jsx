@@ -7,13 +7,30 @@ import { userService } from '../../../src/services/userService';
 import PostDetailModal from './PostDetailModal';
 
 const CommunityPage = () => {
-  const posts = communityService.getPosts().map((post) => ({
-    ...post,
-    user: userService.getUserById(post.userId),
-  }));
-
+  const [posts, setPosts] = useState(() =>
+    communityService.getPosts().map((post) => ({
+      ...post,
+      user: userService.getUserById(post.userId),
+      liked: false,
+      likeCount: post.likes || 0,
+    }))
+  );
   const [selectedPost, setSelectedPost] = useState(null);
   const [imageIndex, setImageIndex] = useState(0);
+
+  const handleToggleLike = (postId) => {
+    setPosts((prevPosts) =>
+      prevPosts.map((post) =>
+        post.id === postId
+          ? {
+              ...post,
+              liked: !post.liked,
+              likeCount: post.liked ? post.likeCount - 1 : post.likeCount + 1,
+            }
+          : post
+      )
+    );
+  };
 
   const handlePrev = () => {
     setImageIndex((prev) => (prev - 1 + selectedPost.images.length) % selectedPost.images.length);
@@ -40,6 +57,7 @@ const CommunityPage = () => {
                 setSelectedPost(post);
                 setImageIndex(0);
               }}
+              onToggleLike={() => handleToggleLike(post.id)}
             />
           ))}
         </div>
@@ -51,11 +69,12 @@ const CommunityPage = () => {
 
       {selectedPost && (
         <PostDetailModal
-          post={selectedPost}
+          post={posts.find((p) => p.id === selectedPost.id)}
           imageIndex={imageIndex}
           onPrev={handlePrev}
           onNext={handleNext}
           onClose={handleClose}
+          onToggleLike={() => handleToggleLike(selectedPost.id)}
         />
       )}
     </div>
