@@ -21,25 +21,30 @@ const Register = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    const { name, email, password, confirmPassword, gender, day, month, year } = formData;
-    if (password !== confirmPassword) {
-      setError('Mật khẩu xác nhận không khớp');
-      return;
-    }
+  const { name, email, password, confirmPassword, gender, day, month, year } = formData;
+  if (password !== confirmPassword) {
+    setError('Mật khẩu xác nhận không khớp');
+    return;
+  }
 
-    const dob = `${year}-${month}-${day}`;
-    const data = { name, email, password, gender, dob };
+  if (!day || !month || !year) {
+    setError('Vui lòng chọn đầy đủ ngày sinh');
+    return;
+  }
 
-    const result = await authService.register(data);
-    if (result.success) {
-      navigate('/login');
-    } else {
-      setError(result.message);
-    }
-  };
+  const dob = `${year}-${month}-${day}`;
+  const data = { name, email, password, gender, dob };
+
+  const result = await authService.register(data);
+  if (result.success) {
+    navigate('/login');
+  } else {
+    setError(result.message);
+  }
+};
 
   const days = Array.from({ length: 31 }, (_, i) => i + 1);
   const months = Array.from({ length: 12 }, (_, i) => i + 1);

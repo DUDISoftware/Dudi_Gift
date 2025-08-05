@@ -1,9 +1,9 @@
 import React from "react";
 import ProductCard from "../../../src/components/Product/ProductCard";
-import { productService } from "../../../src/services/productService";
+// import { productService } from "../../../src/services/productService";
 
 const PopularCategories = () => {
-  const products = productService.getPopularProducts(); 
+  // const products = productService.getPopularProducts(); 
 
   return (
     <section className="bg-[#F8F9F9] py-10 rounded-lg mb-10">
@@ -21,9 +21,9 @@ const PopularCategories = () => {
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 lg:gap-8">
-          {products.map((product) => (
+          {/* {products.map((product) => (
             <ProductCard key={product.id} product={product} />
-          ))}
+          ))} */}
         </div>
       </div>
     </section>

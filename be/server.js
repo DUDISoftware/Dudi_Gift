@@ -8,7 +8,10 @@ const errorHandler = require('./middleware/errorHandler');
 dotenv.config();
 const app = express();
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:5173', // FE URL
+  credentials: true
+}));
 app.use(errorHandler); // 👈 phải đặt sau tất cả route
 
 console.log("TEST ROUTER TYPE:", typeof express.Router); // ✅ Phải ra "function"
@@ -17,7 +20,8 @@ console.log("TEST ROUTER TYPE:", typeof express.Router); // ✅ Phải ra "funct
 app.use('/api/auth', require('./routes/auth.routes'));
 app.use('/api/user', require('./routes/user.routes'));
 app.use('/api/admin', require('./routes/admin.routes'));
-
+app.use('/api/products',require('./routes/product.routes'))
+app.use("/api/categories",require('./routes/productCategory.routes'))
 mongoose.connect(process.env.MONGO_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true

@@ -8,21 +8,30 @@ import { authService } from '../../src/services/authService';
 
 const Login = () => {
   const navigate = useNavigate();
-  const [username, setUsername] = useState('');
+  const [email , setEmail ] = useState('');
   const [password, setPassword] = useState('');
+  const [otpCode, setOtpCode] = useState('');
+  const [showOtpField, setShowOtpField] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
-  const result = await authService.login(username, password);
-  if (result.success) {
-    navigate('/');
-  } else {
-    setError(result.message);
-  }
-};
+    e.preventDefault();
+    setError('');
 
+    const result = await authService.login(email , password, otpCode);
+
+    if (result.success) {
+      navigate('/');
+    } else {
+      setError(result.message);
+
+      // Nếu lỗi OTP, hiện trường nhập OTP
+      if (result.message.toLowerCase().includes('otp')) {
+        setShowOtpField(true);
+      }
+    }
+  };
 
   const handleGoogleLogin = () => {
     alert('Google login click');
@@ -42,8 +51,8 @@ const Login = () => {
           type="text"
           placeholder="Tên đăng nhập hoặc Email"
           className="w-full border rounded px-4 py-2 text-sm"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
+          value={email }
+          onChange={(e) => setEmail (e.target.value)}
         />
 
         <div className="relative">
@@ -54,15 +63,14 @@ const Login = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-          {showPassword && (
+          {showPassword ? (
             <img
               src={Eye}
               alt="Ẩn mật khẩu"
               onClick={() => setShowPassword(false)}
-              className="w-[20px] h-[195px] object-contain absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer"
+              className="w-[20px] h-[20px] object-contain absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer"
             />
-          )}
-          {!showPassword && (
+          ) : (
             <img
               src={Eye1}
               alt="Hiện mật khẩu"
@@ -72,8 +80,18 @@ const Login = () => {
           )}
         </div>
 
-        <div className="flex justify-end text-xs">
+        {showOtpField && (
+          <input
+            type="text"
+            placeholder="Nhập mã OTP"
+            className="w-full border rounded px-4 py-2 text-sm"
+            value={otpCode}
+            onChange={(e) => setOtpCode(e.target.value)}
+            required
+          />
+        )}
 
+        <div className="flex justify-end text-xs">
           <Link to="/forgot-password" className="text-[#047857] hover:underline">
             Quên mật khẩu?
           </Link>
@@ -82,7 +100,6 @@ const Login = () => {
         {error && <p className="text-red-500 text-sm text-center">{error}</p>}
 
         <div className="flex justify-center">
-
           <button
             type="submit"
             className="w-40 bg-[#4CAF50] text-white py-2 rounded-full hover:bg-green-700 text-sm"
@@ -96,20 +113,12 @@ const Login = () => {
           <span className="px-4 text-[13px] font-[Inter] text-black">Hoặc</span>
           <div className="flex-grow border-t border-black"></div>
         </div>
+
         <div className="flex justify-between gap-3">
-          <button
-            onClick={handleGoogleLogin}
-            type="button"
-            className="w-1/2 hover:opacity-90"
-          >
+          <button onClick={handleGoogleLogin} type="button" className="w-1/2 hover:opacity-90">
             <img src={GG} alt="Google Login" className="w-full" />
           </button>
-
-          <button
-            onClick={handleFacebookLogin}
-            type="button"
-            className="w-1/2 hover:opacity-90"
-          >
+          <button onClick={handleFacebookLogin} type="button" className="w-1/2 hover:opacity-90">
             <img src={FB} alt="Facebook Login" className="w-full" />
           </button>
         </div>

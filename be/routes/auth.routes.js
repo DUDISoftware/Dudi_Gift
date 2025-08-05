@@ -5,19 +5,15 @@ const {
   login,
   loginWithGoogle,
   loginWithFacebook,
-  refreshToken
+  refreshToken,
+  logout
 } = require('../controllers/auth.controller');
 
 router.post('/register', register);
 router.post('/login', login);
 router.post('/login-google', loginWithGoogle);
 router.post('/login-facebook', loginWithFacebook);
-// routes/auth.routes.js
 router.post('/refresh-token', refreshToken);
-// routes/auth.routes.js
-router.post('/logout', (req, res) => {
-  res.clearCookie('refreshToken');
-  res.json({ message: 'Đăng xuất thành công' });
-});
+router.post('/logout', logout); // ✅ Gọi controller mới
 
 module.exports = router;

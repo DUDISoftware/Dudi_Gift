@@ -22,7 +22,7 @@ const ProductSection = ({ selectedTab, setSelectedTab, products, isOwner, onProd
         {products.length > 0 ? (
           products.map((product) => (
             <ProductCard
-              key={product.id}
+              key={product._id || product.id}
               product={product}
               isOwner={isOwner}
               onClick={() => onProductClick(product)}

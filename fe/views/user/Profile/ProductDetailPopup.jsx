@@ -11,7 +11,6 @@ const ProductDetailPopup = ({ product, onClose }) => {
       {!showRequestList && (
         <div className="fixed inset-0 bg-[rgba(0,0,0,0.5)] z-50 flex items-center justify-center">
           <div className="bg-white rounded-2xl p-6 w-[400px] relative shadow-lg">
-            
             <button
               className="absolute top-2 right-2 text-gray-600 hover:text-gray-800"
               onClick={onClose}
@@ -20,14 +19,14 @@ const ProductDetailPopup = ({ product, onClose }) => {
             </button>
 
             <img
-              src={product.img}
-              alt={product.name}
+              src={product.image_url?.url || product.img || '/default-product.png'}
+              alt={product.title }
               className="w-full h-52 object-contain rounded mb-4"
             />
 
             <div className="flex justify-between items-center mb-1">
               <h2 className="text-lg font-semibold text-[#2C3E50]">
-                {product.name || 'ÁO SƠ MI NAM'}
+                {product.title  || 'Tên sản phẩm'}
               </h2>
               <div className="flex items-center gap-1 text-sm text-gray-600">
                 <img src={Eye} alt="Eye" className="w-5 h-3" />
@@ -36,8 +35,7 @@ const ProductDetailPopup = ({ product, onClose }) => {
             </div>
 
             <p className="text-sm text-gray-600 mb-6">
-              Chất liệu: Vải Cotton bền, đẹp, dày (35% cotton và 65% polyester).<br />
-              Màu: Xanh Trơn Dài Tay (Blue).
+              {product.description || 'Không có mô tả chi tiết.'}
             </p>
 
             <button
@@ -62,7 +60,7 @@ const ProductDetailPopup = ({ product, onClose }) => {
 
       {showRequestList && (
         <RequestListPopup
-          productId={product.id}
+          productId={product._id || product.id}
           onClose={() => {
             setShowRequestList(false);
             onClose();

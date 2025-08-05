@@ -1,10 +1,23 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import ProductCard from '../../../src/components/Product/ProductCard';
 import { productService } from '../../../src/services/productService';
 
 const NewlyPosted = () => {
-  const products = productService.getNewProducts().slice(0, 8);
+  const [products, setProducts] = useState([]);
   const scrollRef = useRef();
+
+  useEffect(() => {
+    const fetchNewProducts = async () => {
+      try {
+        const newProducts = await productService.getNewProducts();
+        setProducts(newProducts);
+      } catch (err) {
+        console.error("Không thể lấy sản phẩm mới:", err);
+      }
+    };
+    fetchNewProducts();
+  }, []);
+
 
   const handleNext = () => {
     scrollRef.current.scrollBy({ left: 320, behavior: 'smooth' });
@@ -38,7 +51,7 @@ const NewlyPosted = () => {
           className="flex gap-6 overflow-hidden scroll-smooth py-2"
         >
           {products.map((product) => (
-            <div key={product.id} className="flex-shrink-0 w-[85%] sm:w-[300px] md:w-[280px]">
+            <div key={product._id} className="flex-shrink-0 w-[85%] sm:w-[300px] md:w-[280px]">
               <ProductCard product={product} />
             </div>
           ))}

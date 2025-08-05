@@ -1,5 +1,6 @@
-const User = require("../models/user.model");
+const User = require("../models/user/user.model");
 const cloudinary = require("cloudinary").v2;
+const Product = require("../models/product/product.model");
 
 const updateProfile = async (req, res) => {
   try {
@@ -58,23 +59,29 @@ const changePassword = async (req, res) => {
     res.status(500).json({ error: "Lỗi đổi mật khẩu" });
   }
 };
+
 const getUserByUsername = async (req, res) => {
   try {
     const { name } = req.params;
     const decodedName = decodeURIComponent(name);
 
     const user = await User.findOne({ name: decodedName }).select("-password");
-    if (!user)
-      return res.status(404).json({ error: "Không tìm thấy người dùng" });
+    if (!user) return res.status(404).json({ error: "Không tìm thấy người dùng" });
 
-    const plainUser = user.toObject(); // ✅ convert thành object thuần JS
-    plainUser.products = []; // thêm field mới vào được
+    // 🔥 Lấy sản phẩm của user này
+    const products = await Product.find({ user_id: user._id }).sort({ createdAt: -1 });
+
+    const plainUser = user.toObject();
+    plainUser.products = products.filter(p => p.status === "active");
+    plainUser.productsGiven = products.filter(p => p.status === "given");
+
     res.json({ user: plainUser });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Lỗi server" });
   }
 };
+
 
 module.exports = {
   updateProfile,
