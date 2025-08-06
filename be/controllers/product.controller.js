@@ -202,6 +202,23 @@ exports.getNewProducts = async (req, res) => {
     res.status(500).json({ success: false, error: err.message });
   }
 };
+// GET /products/popular
+exports.getPopularProducts = async (req, res) => {
+  try {
+    const products = await Product.find()
+      .populate("user_id")
+      .populate("category")
+      .sort({
+        interested_count: -1, // Ưu tiên sản phẩm có lượt quan tâm cao
+        view_count: -1,       // Nếu bằng nhau thì xét thêm lượt xem
+      })
+      .limit(8);
+
+    res.json({ success: true, products });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+};
 
 exports.getProductsByCategory = async (req, res) => {
   try {

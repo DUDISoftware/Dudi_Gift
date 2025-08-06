@@ -66,7 +66,7 @@ const OtherProfileCard = ({ user }) => {
             <div className="w-full h-full rounded-full relative">
               <div className="absolute top-0 left-0 w-full h-full border-2 border-green-600 rounded-full z-10"></div>
               <img
-                src={user.avatar}
+                src={user.avatar.url}
                 alt="Avatar"
                 className="w-full h-full object-cover rounded-full"
               />

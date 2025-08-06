@@ -21,6 +21,16 @@ export const productService = {
       return [];
     }
   },
+  // 🔹 Lấy sản phẩm phổ biến
+  getPopularProducts: async () => {
+    try {
+      const res = await axios.get(`${API_URL}/products/popular`);
+      return res.data.products;
+    } catch (err) {
+      console.error("Lỗi khi lấy sản phẩm phổ biến:", err);
+      return [];
+    }
+  },
 
   // 🔹 Lấy sản phẩm theo ID
   getProductById: async (id) => {

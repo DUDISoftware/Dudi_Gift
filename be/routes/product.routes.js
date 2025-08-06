@@ -10,7 +10,7 @@ router.get("/my", verifyToken, productController.getMyProducts);
 router.get("/user/:userId", productController.getProductsByUser);
 router.get("/category/:categoryId", productController.getProductsByCategory); // 👈 Đưa lên trước
 router.get("/new", productController.getNewProducts); // 🆕 Lấy 8 sản phẩm mới nhất
-
+router.get("/popular", productController.getPopularProducts); // 🆕 Thêm route lấy sản phẩm phổ biến
 router.get("/:id", productController.getProductById); // 👈 Để sau cùng
 router.put("/:id", uploadProductImages, productController.updateProduct); // ✅ THÊM middleware
 router.delete("/:id", productController.deleteProduct);

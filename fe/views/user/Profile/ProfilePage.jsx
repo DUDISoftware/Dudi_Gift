@@ -16,28 +16,28 @@ const ProfilePage = () => {
   const [selectedTab, setSelectedTab] = useState('displaying');
   const [selectedProduct, setSelectedProduct] = useState(null);
 
-useEffect(() => {
-  const fetchData = async () => {
-    const profile = await userService.getUserProfile(name);
-    const me = await userService.getCurrentUser();
+  useEffect(() => {
+    const fetchData = async () => {
+      const profile = await userService.getUserProfile(name);
+      const me = await userService.getCurrentUser();
 
-    let products = [];
-    if (me?.name === profile?.name) {
-      products = await productService.getMyProducts();
-    } else {
-      products = await productService.getProductsByUser(profile._id);
-    }
+      let products = [];
+      if (me?.name === profile?.name) {
+        products = await productService.getMyProducts();
+      } else {
+        products = await productService.getProductsByUser(profile._id);
+      }
 
-    profile.products = products.filter(p => p.status === 'active');
-    profile.productsGiven = products.filter(p => p.status === 'given');
+      profile.products = products.filter(p => p.status === 'active');
+      profile.productsGiven = products.filter(p => p.status === 'given');
 
-    setUser(profile);
-    setCurrentUser(me);
-    setLoading(false);
-  };
+      setUser(profile);
+      setCurrentUser(me);
+      setLoading(false);
+    };
 
-  fetchData();
-}, [name]);
+    fetchData();
+  }, [name]);
 
   if (loading || !user) return <div className="p-4 text-center">Đang tải...</div>;
 
@@ -61,7 +61,9 @@ useEffect(() => {
             products={productsToShow}
             isOwner={isOwner}
             onProductClick={setSelectedProduct}
+            isMe={isOwner} // ✅ thêm dòng này để quyết định có hiển thị tab "Sản phẩm đã cho" không
           />
+
         </div>
       </div>
 
