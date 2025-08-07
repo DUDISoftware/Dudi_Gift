@@ -70,11 +70,11 @@ const MyProfileCard = ({ user }) => {
           </p>
           <p className="flex items-center gap-2">
             <img src={ParticipateIcon} className="w-4 h-4" alt="Activity" />
-            Đã tham gia: {user.joinedDays || '1 ngày'}
+            Đã tham gia từ: {user.createdAt || '1 ngày'}
           </p>
           <p className="flex items-center gap-2">
             <img src={MapIcon} className="w-4 h-4" alt="Location" />
-            Địa chỉ: {user.location || 'Chưa cập nhật'}
+            Địa chỉ: {user.address || 'Chưa cập nhật'}
           </p>
         </div>
 

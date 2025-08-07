@@ -4,7 +4,7 @@ const productController = require("../controllers/product.controller");
 const uploadProductImages = require("../middleware/uploadProductImages");
 const verifyToken = require("../middleware/verifyToken"); // 👈 cần để lấy user từ token
 
-router.post("/", uploadProductImages, productController.createProduct);
+router.post("/",verifyToken, uploadProductImages, productController.createProduct);
 router.get("/", productController.getAllProducts);
 router.get("/my", verifyToken, productController.getMyProducts);
 router.get("/user/:userId", productController.getProductsByUser);

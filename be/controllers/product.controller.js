@@ -16,8 +16,9 @@ exports.createProduct = async (req, res) => {
       quality,
       status,
       delivery_method,
-      user_id,
     } = req.body;
+
+    const user_id = req.user.id; // ✅ Gán user_id từ token
 
     let rawSlug = slugify(title, { lower: true, strict: true });
     let finalSlug = rawSlug;
@@ -33,7 +34,10 @@ exports.createProduct = async (req, res) => {
       ? { url: mainImageFile.path, public_id: mainImageFile.filename }
       : null;
 
-    const subImages = subImageFiles.map(file => ({ url: file.path, public_id: file.filename }));
+    const subImages = subImageFiles.map(file => ({
+      url: file.path,
+      public_id: file.filename,
+    }));
 
     const product = await Product.create({
       title,
@@ -48,7 +52,7 @@ exports.createProduct = async (req, res) => {
       quality,
       status,
       delivery_method,
-      user_id,
+      user_id, // ✅ dùng đúng user
       image_url: mainImage,
       sub_images_urls: subImages,
     });
@@ -59,14 +63,6 @@ exports.createProduct = async (req, res) => {
   }
 };
 
-exports.getAllProducts = async (req, res) => {
-  try {
-    const products = await Product.find().populate("user_id").populate("category");
-    res.json({ success: true, products });
-  } catch (err) {
-    res.status(500).json({ success: false, error: err.message });
-  }
-};
 
 exports.getProductById = async (req, res) => {
   try {
@@ -213,6 +209,18 @@ exports.getPopularProducts = async (req, res) => {
         view_count: -1,       // Nếu bằng nhau thì xét thêm lượt xem
       })
       .limit(8);
+
+    res.json({ success: true, products });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+};
+exports.getAllProducts = async (req, res) => {
+  try {
+    const products = await Product.find()
+      .populate("user_id")
+      .populate("category")
+      .sort({ createdAt: -1 });
 
     res.json({ success: true, products });
   } catch (err) {

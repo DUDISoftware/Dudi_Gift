@@ -1,7 +1,7 @@
 import { Eye } from 'lucide-react';
 import Upload from '../../../src/assets/img/upload.png';
 
-const PostImageUpload = ({ handleFileChange }) => (
+const PostImageUpload = ({ handleFileChange, images = [] }) => (
   <div>
     <label className="block text-sm font-medium mb-4 flex justify-between items-center">
       6. UPLOAD HÌNH ẢNH VÀ CHỈNH SỬA
@@ -20,11 +20,24 @@ const PostImageUpload = ({ handleFileChange }) => (
         onChange={handleFileChange}
       />
       <div className="w-full">
-        <img
-          src={Upload}
-          alt="Ảnh upload"
-           className="w-full aspect-[3/1] object-cover rounded-lg"
-        />
+        {images.length > 0 ? (
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            {images.map((file, idx) => (
+              <img
+                key={idx}
+                src={URL.createObjectURL(file)}
+                alt={`upload-${idx}`}
+                className="w-full aspect-[3/2] object-cover rounded-lg"
+              />
+            ))}
+          </div>
+        ) : (
+          <img
+            src={Upload}
+            alt="Ảnh upload"
+            className="w-full aspect-[3/1] object-cover rounded-lg"
+          />
+        )}
       </div>
     </label>
 
