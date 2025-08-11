@@ -3,8 +3,8 @@ const ProductCategory = require("../models/product/productCategory.model");
 // Create
 exports.createCategory = async (req, res) => {
   try {
-    const { category_name, slug, description } = req.body;
-    const newCategory = await ProductCategory.create({ category_name, slug, description });
+    const { category_name, slug, description, icon } = req.body;
+    const newCategory = await ProductCategory.create({ category_name, slug, description, icon });
     res.status(201).json({ success: true, category: newCategory });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
@@ -35,7 +35,12 @@ exports.getCategoryById = async (req, res) => {
 // Update
 exports.updateCategory = async (req, res) => {
   try {
-    const updated = await ProductCategory.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    const { category_name, slug, description, icon } = req.body;
+    const updated = await ProductCategory.findByIdAndUpdate(
+      req.params.id,
+      { category_name, slug, description, icon },
+      { new: true }
+    );
     res.json({ success: true, category: updated });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });

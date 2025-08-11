@@ -39,9 +39,10 @@ const Categories = ({ onCategoryClick }) => {
               onClick={() => handleClick(cat._id)}
               className="w-[150px] h-[150px] bg-white rounded-xl border-[2.5px] border-[#F5F1E9] shadow-sm flex flex-col items-center justify-center cursor-pointer transition hover:scale-105"
             >
-              <div className="w-[50px] h-[50px] rounded-full bg-[#F5F1E9] flex items-center justify-center mb-2">
-                <span className="text-lg">📦</span>
+              <div className="w-[70px] h-[70px] rounded-full bg-[#F5F1E9] flex items-center justify-center overflow-hidden">
+                <img src={cat.icon} alt="Category Icon" className="w-[60%] h-[60%] object-contain" />
               </div>
+
               <p className="text-[18px] text-[#30A46C] text-center px-1">
                 {cat.category_name}
               </p>

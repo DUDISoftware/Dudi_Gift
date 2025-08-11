@@ -8,7 +8,7 @@ const ProductDetailPopup = ({ product, onClose }) => {
 
   return (
     <>
-      {!showRequestList && (
+        {!showRequestList && (
         <div className="fixed inset-0 bg-[rgba(0,0,0,0.5)] z-50 flex items-center justify-center">
           <div className="bg-white rounded-2xl p-6 w-[400px] relative shadow-lg">
             <button

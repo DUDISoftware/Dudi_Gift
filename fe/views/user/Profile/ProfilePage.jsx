@@ -18,39 +18,68 @@ const ProfilePage = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const profile = await userService.getUserProfile(name);
-      const me = await userService.getCurrentUser();
+      try {
+        setLoading(true);
+        const profile = await userService.getUserProfile(name);
+        const me = await userService.getCurrentUser();
 
-      let products = [];
-      if (me?.name === profile?.name) {
-        products = await productService.getMyProducts();
-      } else {
-        products = await productService.getProductsByUser(profile._id);
+        let products = [];
+        if (me?.name === profile?.name) {
+          products = await productService.getMyProducts();
+        } else {
+          products = await productService.getProductsByUser(profile._id);
+        }
+
+        profile.products = products.filter(p => p.status === 'active');
+        profile.productsGiven = products.filter(p => p.status === 'given');
+        profile.productsPending = products.filter(p => p.status === 'pending');
+
+        setUser(profile);
+        setCurrentUser(me);
+      } catch (error) {
+        console.error('Error fetching profile data:', error);
+      } finally {
+        setLoading(false);
       }
-
-      profile.products = products.filter(p => p.status === 'active');
-      profile.productsGiven = products.filter(p => p.status === 'given');
-
-      setUser(profile);
-      setCurrentUser(me);
-      setLoading(false);
     };
 
     fetchData();
   }, [name]);
 
-  if (loading || !user) return <div className="p-4 text-center">Đang tải...</div>;
+  if (loading) {
+    return <div className="p-4 text-center">Đang tải...</div>;
+  }
 
-  const productsToShow =
-    selectedTab === 'displaying' ? user?.products || [] : user?.productsGiven || [];
+  if (!user) {
+    return <div className="p-4 text-center">Không tìm thấy người dùng</div>;
+  }
 
   const isOwner = currentUser?.name === user.name;
+
+  const getProductsToShow = () => {
+    switch (selectedTab) {
+      case 'displaying':
+        return user?.products || [];
+      case 'given':
+        return user?.productsGiven || [];
+      case 'pending':
+        return user?.productsPending || [];
+      default:
+        return [];
+    }
+  };
+
+  const productsToShow = getProductsToShow();
 
   return (
     <>
       <div className="flex flex-col lg:flex-row bg-white min-h-screen w-full px-6 py-6 gap-8">
         <div className="w-full lg:w-[21%] flex flex-col items-center lg:items-start gap-6 max-w-7xl mx-auto">
-          {isOwner ? <MyProfileCard user={user} /> : <OtherProfileCard user={user} />}
+          {isOwner ? (
+            <MyProfileCard user={user} />
+          ) : (
+            <OtherProfileCard user={user} />
+          )}
           <AdCard />
         </div>
 
@@ -61,9 +90,8 @@ const ProfilePage = () => {
             products={productsToShow}
             isOwner={isOwner}
             onProductClick={setSelectedProduct}
-            isMe={isOwner} // ✅ thêm dòng này để quyết định có hiển thị tab "Sản phẩm đã cho" không
+            isMe={isOwner}
           />
-
         </div>
       </div>
 
@@ -71,6 +99,7 @@ const ProfilePage = () => {
         <ProductDetailPopup
           product={selectedProduct}
           onClose={() => setSelectedProduct(null)}
+          isOwner={isOwner}
         />
       )}
     </>

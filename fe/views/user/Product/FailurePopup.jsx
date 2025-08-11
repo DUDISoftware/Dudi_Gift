@@ -1,7 +1,7 @@
 import React from 'react';
 import { Trash2 } from 'lucide-react';
 
-const FailurePopup = ({ onClose, requestTime }) => {
+const FailurePopup = ({ onClose, requestTime, message }) => {
   const handleOverlayClick = (e) => {
     if (e.target.id === 'overlay') {
       onClose();
@@ -9,7 +9,6 @@ const FailurePopup = ({ onClose, requestTime }) => {
   };
 
   return (
-
     <div
       id="overlay"
       onClick={handleOverlayClick}
@@ -27,8 +26,8 @@ const FailurePopup = ({ onClose, requestTime }) => {
 
         <h2 className="text-3xl font-bold font-[Inter] text-[#7C8691] mt-2">Thất bại</h2>
         <p className="text-sm text-gray-600 mt-2 mb-4">
-          Bạn đã gửi yêu cầu nhận sản phẩm này<br />
-          lúc {requestTime}
+          {message || `Bạn đã gửi yêu cầu nhận sản phẩm này<br />
+          lúc ${requestTime}`}
         </p>
 
         <div className="bg-[#F1F5F8] w-[calc(100%+3rem)] -mx-6 px-6 py-4 rounded-b-xl">
@@ -47,7 +46,6 @@ const FailurePopup = ({ onClose, requestTime }) => {
             </button>
           </div>
         </div>
-
       </div>
     </div>
   );

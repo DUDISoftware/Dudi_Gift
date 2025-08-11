@@ -5,8 +5,9 @@ const productCategorySchema = new mongoose.Schema(
     category_name: { type: String, required: true },
     slug: { type: String, required: true, unique: true },
     description: String,
+    icon: String, // ➕ Thêm trường icon (URL hoặc tên biểu tượng)
   },
-  { timestamps: true } // Tự động tạo createdAt và updatedAt
+  { timestamps: true }
 );
 
 module.exports = mongoose.model("ProductCategory", productCategorySchema);

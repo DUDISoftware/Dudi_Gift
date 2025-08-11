@@ -1,36 +1,69 @@
-import { userService } from './userService';
+import axios from "axios";
 
-const mockRequests = [
-  {
-    id: 1,
-    productId: 1,
-    userId: 2, 
-    time: '18h00 ngày 20/5/2025',
-  },
-  {
-    id: 2,
-    productId: 1,
-    userId: 1,
-    time: '18h15 ngày 20/5/2025',
-  },
-  {
-    id: 3,
-    productId: 2,
-    userId: 2,
-    time: '10h00 ngày 21/5/2025',
-  }
-];
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+axios.defaults.withCredentials = true;
+
+const getAuthHeaders = () => {
+  const token = localStorage.getItem("token");
+  return {
+    Authorization: `Bearer ${token}`,
+  };
+};
 
 export const requestService = {
+  // 🔹 Lấy tất cả request theo productId
   getRequestsByProductId: async (productId) => {
-    const requests = mockRequests.filter((r) => r.productId === productId);
-    return requests.map((req) => {
-      const user = userService.getUserById(req.userId);
-      return {
-        ...req,
-        name: user?.name || 'Người dùng ẩn danh',
-        avatar: user?.avatar || '/default-avatar.png',
-      };
-    });
+    try {
+      const res = await axios.get(`${API_URL}/requests/product/${productId}`, {
+        headers: getAuthHeaders(),
+      });
+      return res.data.requests;
+    } catch (err) {
+      console.error("Lỗi khi lấy requests:", err.response?.data || err.message);
+      return [];
+    }
+  },
+
+  // 🔹 Gửi request nhận sản phẩm
+  createRequest: async (productId, message = "") => {
+    try {
+      const res = await axios.post(
+        `${API_URL}/requests`,
+        { productId, message },
+        { headers: getAuthHeaders() }
+      );
+      return res.data;
+    } catch (err) {
+      console.error("Lỗi khi tạo request:", err.response?.data || err.message);
+      throw err;
+    }
+  },
+
+  // 🔹 Chủ sản phẩm duyệt request
+  approveRequest: async (requestId) => {
+    try {
+      const res = await axios.put(
+        `${API_URL}/requests/approve/${requestId}`,
+        {},
+        { headers: getAuthHeaders() }
+      );
+      return res.data;
+    } catch (err) {
+      console.error("Lỗi khi duyệt request:", err.response?.data || err.message);
+      throw err;
+    }
+  },
+
+  // 🔹 Kiểm tra trạng thái yêu cầu của user hiện tại
+  checkRequestStatus: async (productId) => {
+    try {
+      const res = await axios.get(`${API_URL}/requests/status/${productId}`, {
+        headers: getAuthHeaders(),
+      });
+      return res.data; // { status: 'none' | 'pending' | 'approved' | ... }
+    } catch (err) {
+      console.error("Lỗi khi kiểm tra trạng thái:", err.response?.data || err.message);
+      return { status: "none" };
+    }
   },
 };

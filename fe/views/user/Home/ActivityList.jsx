@@ -14,7 +14,7 @@ const ActivityList = () => {
         <img
           src={ActivityImage}
           alt="Cách hoạt động"
-          className="w-full max-w-[1100px] px-4 sm:px-10 h-auto object-contain"
+          className="w-full max-w-[1280px] px-4 sm:px-10 h-auto object-contain"
         />
       </div>
     </section>

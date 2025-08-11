@@ -22,6 +22,8 @@ app.use('/api/user', require('./routes/user.routes'));
 app.use('/api/admin', require('./routes/admin.routes'));
 app.use('/api/products',require('./routes/product.routes'))
 app.use("/api/categories",require('./routes/productCategory.routes'))
+app.use('/api/requests', require('./routes/productRequestRoutes'));
+
 mongoose.connect(process.env.MONGO_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true

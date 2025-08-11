@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { productService } from '../../../src/services/productService';
+import { requestService } from '../../../src/services/requestService';
 import GiftsByUser from './GiftsByUser';
 import SimilarProducts from './SimilarProducts';
 import SuccessPopup from './SuccessPopup';
@@ -21,30 +22,141 @@ const ProductDetail = () => {
   const [selectedImage, setSelectedImage] = useState('');
   const [showSuccess, setShowSuccess] = useState(false);
   const [showFailure, setShowFailure] = useState(false);
+  const [failureMessage, setFailureMessage] = useState('');
   const [isFavorited, setIsFavorited] = useState(false);
+  const [requestStatus, setRequestStatus] = useState(null);
+  const [isOwner, setIsOwner] = useState(false);
+  const [loadingStatus, setLoadingStatus] = useState(true);
 
   useEffect(() => {
     const fetchProduct = async () => {
-      const data = await productService.getProductById(id);
-      if (data) {
-        setProduct(data);
-        const mainImg = data.image_url?.url || data.img || '/default-product.png';
-        setSelectedImage(mainImg);
+      try {
+        const data = await productService.getProductById(id);
+        if (data) {
+          setProduct(data);
+          const mainImg = data.image_url?.url || data.img || '/default-product.png';
+          setSelectedImage(mainImg);
+
+          // Cách 1: Lấy user từ localStorage (phổ biến nhất)
+          const currentUser = JSON.parse(localStorage.getItem('user'));
+
+          // Cách 2: Hoặc nếu bạn lưu token và cần decode
+          // const token = localStorage.getItem('token');
+          // const decoded = jwtDecode(token);
+
+          // Kiểm tra chủ sản phẩm
+          // Lưu ý: Kiểm tra cả cấu trúc data.user_id (có thể là object hoặc string)
+          if (currentUser) {
+            const productOwnerId = typeof data.user_id === 'object'
+              ? data.user_id._id
+              : data.user_id;
+            setIsOwner(currentUser.id === productOwnerId || currentUser._id === productOwnerId);
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching product:', error);
       }
     };
-    if (id) fetchProduct();
+
+    const checkRequestStatus = async () => {
+      try {
+        const response = await requestService.checkRequestStatus(id);
+        setRequestStatus(response.status);
+      } catch (error) {
+        console.error('Error checking request status:', error);
+        setRequestStatus('none');
+      } finally {
+        setLoadingStatus(false);
+      }
+    };
+
+    if (id) {
+      fetchProduct();
+      checkRequestStatus();
+    }
   }, [id]);
 
   const handleToggleFavorite = () => {
     setIsFavorited((prev) => !prev);
   };
 
-  const handleReceive = () => {
-    if (product?.given) {
+  const handleReceive = async () => {
+    try {
+      // Kiểm tra lại trạng thái trước khi gửi request
+      if (requestStatus === 'pending') {
+        setFailureMessage('Bạn đã gửi yêu cầu trước đó và đang chờ duyệt.');
+        setShowFailure(true);
+        return;
+      }
+
+      if (requestStatus === 'approved') {
+        setFailureMessage('Bạn đã được duyệt nhận sản phẩm này.');
+        setShowFailure(true);
+        return;
+      }
+
+      const res = await requestService.createRequest(id);
+      if (res) {
+        setShowSuccess(true);
+        setRequestStatus('pending');
+      } else {
+        setFailureMessage('Có lỗi xảy ra khi gửi yêu cầu.');
+        setShowFailure(true);
+      }
+    } catch (error) {
+      const errorMessage = error.response?.data?.message || error.message || 'Có lỗi xảy ra';
+      setFailureMessage(errorMessage);
       setShowFailure(true);
-    } else {
-      setShowSuccess(true);
-      setProduct(prev => ({ ...prev, given: true }));
+    }
+  };
+
+  const renderReceiveButton = () => {
+    if (isOwner) return null;
+    if (loadingStatus) return null;
+
+    switch (requestStatus) {
+      case 'none':
+        return (
+          <button
+            onClick={handleReceive}
+            className="flex-1 flex items-center justify-center gap-2 py-2 rounded-full bg-green-600 text-white hover:bg-green-700"
+          >
+            <img src={Shop} alt="Đặt hàng" className="w-5 h-5" />
+            Nhận ngay
+          </button>
+        );
+      case 'pending':
+        return (
+          <button
+            className="flex-1 flex items-center justify-center gap-2 py-2 rounded-full bg-yellow-500 text-white cursor-not-allowed"
+            disabled
+          >
+            <img src={Shop} alt="Đặt hàng" className="w-5 h-5" />
+            Đang chờ duyệt
+          </button>
+        );
+      case 'approved':
+        return (
+          <button
+            className="flex-1 flex items-center justify-center gap-2 py-2 rounded-full bg-blue-600 text-white cursor-not-allowed"
+            disabled
+          >
+            <img src={Shop} alt="Đặt hàng" className="w-5 h-5" />
+            Đã được duyệt
+          </button>
+        );
+      case 'rejected':
+        return (
+          <button
+            className="flex-1 flex items-center justify-center gap-2 py-2 rounded-full bg-red-500 text-white cursor-not-allowed"
+            disabled
+          >
+            <img src={Shop} alt="Đặt hàng" className="w-5 h-5" />
+            Đã bị từ chối
+          </button>
+        );
+      default:
+        return null;
     }
   };
 
@@ -70,7 +182,6 @@ const ProductDetail = () => {
           </p>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-
             {/* Image Gallery */}
             <div className="flex gap-4">
               {/* Thumbnail list */}
@@ -96,7 +207,6 @@ const ProductDetail = () => {
                 />
               </div>
             </div>
-
 
             {/* Product Info */}
             <div>
@@ -126,9 +236,8 @@ const ProductDetail = () => {
               <div className="mb-2 border-b border-gray-200 pb-1">
                 {product.description && (
                   <p className="text-sm text-[#868686]">
-                   <strong className="text-black">Giới thiệu: </strong> {product.description}
+                    <strong className="text-black">Giới thiệu: </strong> {product.description}
                   </p>
-
                 )}
               </div>
 
@@ -151,13 +260,7 @@ const ProductDetail = () => {
                   Chat ngay
                 </Link>
 
-                <button
-                  onClick={handleReceive}
-                  className="flex-1 flex items-center justify-center gap-2 py-2 rounded-full bg-green-600 text-white hover:bg-green-700"
-                >
-                  <img src={Shop} alt="Đặt hàng" className="w-5 h-5" />
-                  Nhận ngay
-                </button>
+                {renderReceiveButton()}
               </div>
 
               <div className="flex items-center gap-3 mb-4">
@@ -239,7 +342,13 @@ const ProductDetail = () => {
 
         {/* Popups */}
         {showSuccess && <SuccessPopup onClose={() => setShowSuccess(false)} />}
-        {showFailure && <FailurePopup onClose={() => setShowFailure(false)} requestTime={requestTime} />}
+        {showFailure && (
+          <FailurePopup
+            onClose={() => setShowFailure(false)}
+            requestTime={requestTime}
+            message={failureMessage}
+          />
+        )}
       </div>
     </div>
   );
