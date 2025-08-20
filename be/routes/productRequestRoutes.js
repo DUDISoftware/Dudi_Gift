@@ -18,5 +18,7 @@ router.get('/status/:productId', verifyToken, checkRole(['user']), controller.ch
 
 // Lấy danh sách người xin sản phẩm
 router.get('/product/:productId', verifyToken, checkRole(['user', 'admin']), controller.getRequestsByProduct);
-
+// Thêm vào productRequest.router.js
+router.get('/received-gifts', verifyToken, checkRole(['user']), controller.getReceivedGifts);
+router.get('/given-gifts', verifyToken, checkRole(['user']), controller.getGivenGifts);
 module.exports = router;

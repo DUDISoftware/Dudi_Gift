@@ -1,3 +1,4 @@
+// product.model.js
 const mongoose = require("mongoose");
 
 const productSchema = new mongoose.Schema(
@@ -10,7 +11,7 @@ const productSchema = new mongoose.Schema(
     title: { type: String, required: true },
     slug: { type: String, required: true, unique: true },
     description: String,
-    category: { type: mongoose.Schema.Types.ObjectId, ref: "ProductCategory" }, // ✅ sửa ref đúng
+    category: { type: mongoose.Schema.Types.ObjectId, ref: "ProductCategory" },
     image_url: {
       url: String,
       public_id: String,
@@ -33,8 +34,8 @@ const productSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["pending", "active", "given", "hidden"],
-      default: "pending",
+      enum: ["active", "given", "hidden"],
+      default: "active",
     },
     delivery_method: {
       type: String,
@@ -43,8 +44,15 @@ const productSchema = new mongoose.Schema(
     },
     view_count: { type: Number, default: 0 },
     interested_count: { type: Number, default: 0 },
+
+    // 🔹 Thêm trường này để lưu id người được tặng
+    given_to: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      default: null,
+    },
   },
-  { timestamps: true } // Tự động createdAt / updatedAt
+  { timestamps: true }
 );
 
 module.exports = mongoose.model("Product", productSchema);

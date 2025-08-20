@@ -33,7 +33,7 @@ const AllProducts = () => {
       if (selectedCategoryId) {
         res = await productService.getProductsByCategory(selectedCategoryId);
       } else {
-        res = await productService.getAllProducts();
+        res = await productService.getAvailableProducts();
       }
       setProducts(res);
     };

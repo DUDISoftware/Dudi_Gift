@@ -120,7 +120,7 @@ const Header = () => {
                     </Link>
                     <Link to="/notifications" onClick={() => setMenuOpen(false)} className="text-gray-700 hover:text-green-600">Thông báo</Link>
                     <Link to="/messages" onClick={() => setMenuOpen(false)} className="text-gray-700 hover:text-green-600">Tin nhắn</Link>
-                    <Link to="/community" onClick={() => setMenuOpen(false)} className="text-gray-700 hover:text-green-600">Tin đã đăng</Link>
+                    <Link to="/community" onClick={() => setMenuOpen(false)} className="text-gray-700 hover:text-green-600">Lịch sử cho nhận </Link>
                     <Link to="/account-settings" onClick={() => setMenuOpen(false)} className="text-gray-700 hover:text-green-600">Cài đặt tài khoản</Link>
                     <button
                       onClick={() => {
@@ -208,12 +208,12 @@ const Header = () => {
                     </li>
                     <li
                       onClick={() => {
-                        navigate('/community');
+                        navigate('/history-gift');
                         setDropdownOpen(false);
                       }}
                       className="px-4 py-2 flex items-center gap-2 hover:bg-gray-100 cursor-pointer"
                     >
-                      <img src={NewsIcon} className="w-5 h-5" /> Tin đã đăng
+                      <img src={NewsIcon} className="w-5 h-5" /> Lịch sử cho nhận
                     </li>
                     <li
                       onClick={() => {

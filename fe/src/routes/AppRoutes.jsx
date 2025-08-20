@@ -22,7 +22,7 @@ import ResetSuccess from "../../views/auth/ResetSuccess";
 import NotFoundPage from '../../views/common/NotFound';
 import ChatLayout from "../../views/user/Chat/ChatLayout";
 import AccountSettings from "../../views/user/Account/AccountSettings";
-
+import HistoryGift from "../../views/user/Profile/HistoryGift";
 
 export default function AppRoutes() {
   return (
@@ -48,7 +48,7 @@ export default function AppRoutes() {
         <Route path="/product/:id" element={<ProductDetail />} />
         <Route path="/program" element={<ProgramsPage />} />
         <Route path="/profile/:name" element={<ProfilePage />} />
-
+        <Route path="/history-gift" element={<HistoryGift/>}/>
         <Route path="/faq" element={<FAQPage />} />
         <Route path="/post" element={<PostPage />} />
         <Route path="/account-settings" element={<AccountSettings />} />

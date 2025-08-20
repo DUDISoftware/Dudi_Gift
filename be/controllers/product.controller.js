@@ -201,7 +201,9 @@ exports.getNewProducts = async (req, res) => {
 // GET /products/popular
 exports.getPopularProducts = async (req, res) => {
   try {
-    const products = await Product.find()
+    const products = await Product.find(  
+      {status: "active",
+      given_to: null,}) // chỉ lấy sản phẩm chưa cho)
       .populate("user_id")
       .populate("category")
       .sort({
@@ -221,6 +223,42 @@ exports.getAllProducts = async (req, res) => {
       .populate("user_id")
       .populate("category")
       .sort({ createdAt: -1 });
+
+    res.json({ success: true, products });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+};
+// GET /products/available
+exports.getAvailableProducts = async (req, res) => {
+  try {
+    const products = await Product.find({
+      status: "active",
+      given_to: null, // chỉ lấy sản phẩm chưa cho
+    })
+      .populate("user_id")
+      .populate("category")
+      .sort({ createdAt: -1 });
+
+    res.json({ success: true, products });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+};
+
+// GET /products/given
+exports.getGivenProducts = async (req, res) => {
+  try {
+    const products = await Product.find({
+      $or: [
+        { status: "given" },
+        { given_to: { $ne: null } }, // có người nhận rồi
+      ],
+    })
+      .populate("user_id")
+      .populate("category")
+      .populate("given_to") // để hiển thị luôn thông tin người được tặng
+      .sort({ updatedAt: -1 });
 
     res.json({ success: true, products });
   } catch (err) {

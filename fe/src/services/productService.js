@@ -21,6 +21,29 @@ export const productService = {
       return [];
     }
   },
+
+  // 🔹 Lấy sản phẩm còn khả dụng (chưa tặng)
+  getAvailableProducts: async () => {
+    try {
+      const res = await axios.get(`${API_URL}/products/available`);
+      return res.data.products;
+    } catch (err) {
+      console.error("Lỗi khi lấy sản phẩm còn khả dụng:", err);
+      return [];
+    }
+  },
+
+  // 🔹 Lấy sản phẩm đã cho (đã tặng)
+  getGivenProducts: async () => {
+    try {
+      const res = await axios.get(`${API_URL}/products/given`);
+      return res.data.products;
+    } catch (err) {
+      console.error("Lỗi khi lấy sản phẩm đã cho:", err);
+      return [];
+    }
+  },
+
   // 🔹 Lấy sản phẩm phổ biến
   getPopularProducts: async () => {
     try {
@@ -42,13 +65,18 @@ export const productService = {
       return null;
     }
   },
-  // 🔹 Lấy sản phẩm mới nhất (ví dụ: sắp xếp theo ngày tạo, giới hạn 8)
 
-  // productService.js
+  // 🔹 Lấy sản phẩm mới nhất
   getNewProducts: async () => {
-    const res = await axios.get(`${API_URL}/products/new`);
-    return res.data.products;
+    try {
+      const res = await axios.get(`${API_URL}/products/new`);
+      return res.data.products;
+    } catch (err) {
+      console.error("Lỗi khi lấy sản phẩm mới nhất:", err);
+      return [];
+    }
   },
+
   // 🔹 Lấy sản phẩm theo category
   getProductsByCategory: async (categoryId) => {
     try {
@@ -60,7 +88,7 @@ export const productService = {
     }
   },
 
-  // 🔹 Lấy sản phẩm của người dùng hiện tại
+  // 🔹 Lấy sản phẩm của tôi
   getMyProducts: async () => {
     try {
       const res = await axios.get(`${API_URL}/products/my`, {
@@ -72,6 +100,7 @@ export const productService = {
       return [];
     }
   },
+
   // 🔹 Lấy sản phẩm của user khác
   getProductsByUser: async (userId) => {
     try {

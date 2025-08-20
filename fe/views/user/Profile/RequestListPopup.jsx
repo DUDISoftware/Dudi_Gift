@@ -20,14 +20,14 @@ const RequestListPopup = ({ productId, onClose }) => {
         setLoading(true);
         const data = await requestService.getRequestsByProductId(productId);
         setRequests(data);
-        
+
         // Tìm request đã được approved (nếu có)
         const approved = data.find(req => req.status === 'approved');
         if (approved) {
           setApprovedRequest(approved);
           setSelectedRequest(approved);
         }
-        
+
         // Lấy trạng thái sản phẩm (từ request hoặc API khác nếu cần)
         if (data.length > 0) {
           setProductStatus(data[0].product?.status || null);
@@ -53,7 +53,7 @@ const RequestListPopup = ({ productId, onClose }) => {
       await requestService.approveRequest(selectedRequest._id);
       setApprovedRequest(selectedRequest);
       setShowSuccess(true);
-      
+
       // Cập nhật trạng thái các request khác
       setRequests(prev => prev.map(req => ({
         ...req,
@@ -99,7 +99,7 @@ const RequestListPopup = ({ productId, onClose }) => {
       {!showSuccess && (
         <div className="fixed inset-0 bg-[rgba(0,0,0,0.5)] z-50 flex items-center justify-center">
           <div className="bg-white rounded-xl px-6 py-6 w-[400px] max-h-[90vh] overflow-auto relative shadow-lg">
-            <button 
+            <button
               className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
               onClick={onClose}
             >
@@ -129,17 +129,15 @@ const RequestListPopup = ({ productId, onClose }) => {
                 {requests.map((request) => (
                   <li
                     key={request._id}
-                    className={`p-3 rounded-lg border ${
-                      request.status === 'approved'
-                        ? 'border-green-500 bg-green-50'
-                        : request.status === 'rejected'
+                    className={`p-3 rounded-lg border ${request.status === 'approved'
+                      ? 'border-green-500 bg-green-50'
+                      : request.status === 'rejected'
                         ? 'border-gray-200 bg-gray-50 opacity-70'
                         : 'border-gray-200 hover:bg-gray-50'
-                    } ${
-                      !isProductGiven && request.status !== 'approved' 
-                        ? 'cursor-pointer' 
+                      } ${!isProductGiven && request.status !== 'approved'
+                        ? 'cursor-pointer'
                         : 'cursor-default'
-                    }`}
+                      }`}
                     onClick={() => {
                       if (!isProductGiven && request.status !== 'approved') {
                         setSelectedRequest(request);
@@ -187,11 +185,10 @@ const RequestListPopup = ({ productId, onClose }) => {
                 <button
                   onClick={handleApproveRequest}
                   disabled={!selectedRequest || isProductGiven}
-                  className={`flex-1 py-2 rounded-lg font-medium ${
-                    selectedRequest && !isProductGiven
-                      ? 'bg-green-600 text-white hover:bg-green-700'
-                      : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                  }`}
+                  className={`flex-1 py-2 rounded-lg font-medium ${selectedRequest && !isProductGiven
+                    ? 'bg-green-600 text-white hover:bg-green-700'
+                    : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                    }`}
                 >
                   Duyệt yêu cầu
                 </button>
@@ -205,8 +202,18 @@ const RequestListPopup = ({ productId, onClose }) => {
         <SuccessPopup
           onClose={onClose}
           message={`Đã duyệt ${selectedRequest?.requester?.name} nhận quà thành công`}
+          receiver={{
+            name: selectedRequest?.requester?.name,
+            avatar: selectedRequest?.requester?.avatar?.url,
+            message: selectedRequest?.message,
+            phone: selectedRequest?.requester?.phone,
+            email: selectedRequest?.requester?.email,
+            address: selectedRequest?.requester?.address
+          }}
+
         />
       )}
+
     </>
   );
 };

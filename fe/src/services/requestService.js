@@ -66,4 +66,29 @@ export const requestService = {
       return { status: "none" };
     }
   },
+    // 🔹 Lấy danh sách quà đã nhận
+  getReceivedGifts: async () => {
+    try {
+      const res = await axios.get(`${API_URL}/requests/received-gifts`, {
+        headers: getAuthHeaders(),
+      });
+      return res.data.gifts;
+    } catch (err) {
+      console.error("Lỗi khi lấy quà đã nhận:", err.response?.data || err.message);
+      return [];
+    }
+  },
+
+  // 🔹 Lấy danh sách quà đã tặng
+  getGivenGifts: async () => {
+    try {
+      const res = await axios.get(`${API_URL}/requests/given-gifts`, {
+        headers: getAuthHeaders(),
+      });
+      return res.data.gifts;
+    } catch (err) {
+      console.error("Lỗi khi lấy quà đã tặng:", err.response?.data || err.message);
+      return [];
+    }
+  },
 };

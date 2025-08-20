@@ -6,7 +6,6 @@ const ProductSection = ({ selectedTab, setSelectedTab, products, isOwner, onProd
     ? [
         { id: 'displaying', label: 'Sản phẩm đang hiển thị' },
         { id: 'given', label: 'Sản phẩm đã cho' },
-        { id: 'pending', label: 'Sản phẩm chờ duyệt' }
       ] 
     : [
         { id: 'displaying', label: 'Sản phẩm đang hiển thị' }
@@ -38,7 +37,6 @@ const ProductSection = ({ selectedTab, setSelectedTab, products, isOwner, onProd
                 isOwner={isOwner}
                 onClick={() => onProductClick(product)}
                 className="shadow-xl rounded-lg"
-                showStatus={selectedTab === 'pending'} // Hiển thị trạng thái cho sản phẩm chờ duyệt
               />
             ))
           ) : (
