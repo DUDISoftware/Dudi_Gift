@@ -36,107 +36,50 @@ const register = async (req, res) => {
   }
 };
 
+// In your auth controller (where you generate tokens)
 const login = async (req, res) => {
   try {
-    const { email, password, otp_code } = req.body;
-
-    console.log("📥 Login request:", { email, password }); // ✅ In ra dữ liệu nhận được
-
+    const { email, password } = req.body;
+    
+    // Find user and validate password...
     const user = await User.findOne({ email });
-
     if (!user) {
-      console.log("❌ Không tìm thấy user với email:", email);
-      await LoginLog.create({
-        ip_address: req.ip,
-        device_info: req.headers["user-agent"],
-        status: "fail",
-      });
-      return res.status(400).json({ error: "Email không tồn tại" });
+      return res.status(400).json({ message: 'User not found' });
     }
-
-    console.log("🔍 User tìm được:", user.email);
-    console.log("🧂 Hashed password trong DB:", user.password);
-    console.log("🧪 Mật khẩu client gửi lên:", password);
 
     const isMatch = await bcrypt.compare(password, user.password);
-    console.log("✅ Kết quả bcrypt.compare:", isMatch); // ✅ Quan trọng nhất
-
     if (!isMatch) {
-      console.log("❌ Mật khẩu không đúng!");
-      await LoginLog.create({
-        user_id: user._id,
-        ip_address: req.ip,
-        device_info: req.headers["user-agent"],
-        status: "fail",
-      });
-      return res.status(400).json({ error: "Sai mật khẩu" });
-    }
-    // OTP xác thực nếu chưa xác thực
-    if (!user.isVerified) {
-      // Nếu là mã mặc định trong dev thì bỏ qua kiểm tra DB
-      if (otp_code === "123456" && process.env.NODE_ENV !== "production") {
-        user.isVerified = true;
-        await user.save();
-      } else {
-        const otpRecord = await UserOtp.findOne({
-          user_id: user._id,
-          otp_code,
-          used: false,
-        });
-        if (!otpRecord || otpRecord.expires_at < new Date()) {
-          return res
-            .status(400)
-            .json({ error: "Mã OTP không hợp lệ hoặc đã hết hạn" });
-        }
-
-        otpRecord.used = true;
-        await otpRecord.save();
-
-        user.isVerified = true;
-        await user.save();
-      }
+      return res.status(400).json({ message: 'Invalid credentials' });
     }
 
+    // Create token with proper user information
     const token = jwt.sign(
-      { id: user._id.toString(), role: user.role },
+      {
+        id: user._id.toString(),  // Make sure to include id
+        _id: user._id.toString(), // Also include _id for compatibility
+        email: user.email,
+        name: user.name,
+        // Add other fields you might need
+      },
       process.env.JWT_SECRET,
-      { expiresIn: "1d" }
+      { expiresIn: '7d' }
     );
 
-    const refreshToken = jwt.sign(
-      { id: user._id },
-      process.env.REFRESH_TOKEN_SECRET,
-      { expiresIn: "7d" }
-    );
+    console.log('✅ Token generated for user:', user._id);
 
-    await UserToken.create({
-      user_id: user._id,
-      token: refreshToken,
-      device_info: req.headers["user-agent"] || "Unknown",
-      ip_address: req.ip,
-      expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+    res.json({
+      token,
+      user: {
+        _id: user._id,
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        avatar: user.avatar
+      }
     });
-
-    await LoginLog.create({
-      user_id: user._id,
-      device_info: req.headers["user-agent"] || "Unknown",
-      ip_address: req.ip,
-      status: "success",
-    });
-
-    const userSafe = user.toObject();
-    delete userSafe.password;
-
-    res.cookie("refreshToken", refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
-
-    res.json({ message: "Đăng nhập thành công!", token, user: userSafe });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Lỗi server" });
+  } catch (error) {
+    console.error('Login error:', error);
+    res.status(500).json({ message: 'Server error' });
   }
 };
 

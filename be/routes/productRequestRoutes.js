@@ -1,24 +1,15 @@
 const express = require('express');
 const router = express.Router();
 const verifyToken = require('../middleware/verifyToken');
-const checkRole = require('../middleware/checkRole');
-const controller = require('../controllers/productRequestController');
+const ctrl = require('../controllers/productRequestController');
 
-// Gửi yêu cầu xin sản phẩm
-router.post('/', verifyToken, checkRole(['user']), controller.createRequest);
+router.post('/', verifyToken, ctrl.createRequest);
+router.get('/product/:productId', verifyToken, ctrl.getRequestsByProduct);
+router.post('/:requestId/approve', verifyToken, ctrl.approveRequest);
+router.post('/:requestId/reject', verifyToken, ctrl.rejectRequest);
+router.post('/:requestId/cancel', verifyToken, ctrl.cancelRequest);
+router.get('/status/:productId', verifyToken, ctrl.checkRequestStatus);
+router.get('/received', verifyToken, ctrl.getReceivedGifts);
+router.get('/given', verifyToken, ctrl.getGivenGifts);
 
-// Chủ sản phẩm duyệt người nhận
-router.put('/approve/:requestId', verifyToken, checkRole(['user', 'admin']), controller.approveRequest);
-
-// Hủy yêu cầu xin
-// router.put('/cancel/:requestId', verifyToken, checkRole(['user']), controller.cancelRequest);
-
-// Kiểm tra trạng thái yêu cầu của người dùng hiện tại
-router.get('/status/:productId', verifyToken, checkRole(['user']), controller.checkRequestStatus);
-
-// Lấy danh sách người xin sản phẩm
-router.get('/product/:productId', verifyToken, checkRole(['user', 'admin']), controller.getRequestsByProduct);
-// Thêm vào productRequest.router.js
-router.get('/received-gifts', verifyToken, checkRole(['user']), controller.getReceivedGifts);
-router.get('/given-gifts', verifyToken, checkRole(['user']), controller.getGivenGifts);
 module.exports = router;

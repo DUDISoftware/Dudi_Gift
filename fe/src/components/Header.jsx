@@ -7,8 +7,8 @@ import AccountIcon from '../../src/assets/img/account.png';
 import SettingIcon from '../../src/assets/img/settings.png';
 import NewsIcon from '../../src/assets/img/new.png';
 import LogoutIcon from '../../src/assets/img/logout.png';
-import Bell from '../../src/assets/img/bell.png';
 import Message from '../../src/assets/img/message_1.png';
+import NotificationBell from './NotificationBell';
 
 const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -158,11 +158,10 @@ const Header = () => {
             key={idx}
             to={item.path}
             onClick={() => setActiveMenu(item.label)}
-            className={`relative font-poppins px-2 py-1 transition ${
-              activeMenu === item.label
+            className={`relative font-poppins px-2 py-1 transition ${activeMenu === item.label
                 ? 'text-green-600'
                 : 'text-gray-600 hover:text-green-600'
-            }`}
+              }`}
           >
             {item.label}
             {activeMenu === item.label && (
@@ -184,9 +183,12 @@ const Header = () => {
         <span className="bg-white text-green-600 rounded-full w-10 h-10 flex items-center justify-center text-base font-bold">VN</span>
         {isLoggedIn ? (
           <>
-            <Link to="/notifications"><img src={Bell} alt="bell" className="w-9 h-9 rounded-full object-cover" /></Link>
-            <Link to="/messages"><img src={Message} alt="message" className="w-9 h-9 rounded-full object-cover" /></Link>
+            {/* 🔔 Notification real-time */}
+            <NotificationBell />
 
+            <Link to="/messages">
+              <img src={Message} alt="message" className="w-9 h-9 rounded-full object-cover" />
+            </Link>
             <div className="relative">
               <button onClick={() => setDropdownOpen(!dropdownOpen)} className="flex items-center bg-white rounded-full px-2 py-1 shadow gap-2">
                 <img src={avatar} alt="avatar" className="w-8 h-8 rounded-full object-cover" />

@@ -159,11 +159,14 @@ exports.deleteProduct = async (req, res) => {
   }
 };
 
+// GET /products/my
 exports.getMyProducts = async (req, res) => {
   try {
     const userId = req.user.id;
+
     const products = await Product.find({ user_id: userId })
-      .populate("category")
+      .populate("category", "title slug")
+      .populate("user_id", "name avatar email")
       .sort({ createdAt: -1 });
 
     res.json({ success: true, products });
@@ -171,13 +174,16 @@ exports.getMyProducts = async (req, res) => {
     res.status(500).json({ success: false, error: err.message });
   }
 };
+
+// GET /products/user/:userId
 // GET /products/user/:userId
 exports.getProductsByUser = async (req, res) => {
   try {
     const { userId } = req.params;
 
     const products = await Product.find({ user_id: userId })
-      .populate("category")
+      .populate("category", "title slug")   // chỉ lấy field cần
+      .populate("user_id", "name avatar email") // lấy thông tin user tạo
       .sort({ createdAt: -1 });
 
     res.json({ success: true, products });
@@ -185,6 +191,8 @@ exports.getProductsByUser = async (req, res) => {
     res.status(500).json({ success: false, error: err.message });
   }
 };
+
+
 exports.getNewProducts = async (req, res) => {
   try {
     const products = await Product.find()

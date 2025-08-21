@@ -1,94 +1,85 @@
-import axios from "axios";
-
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
-axios.defaults.withCredentials = true;
-
-const getAuthHeaders = () => {
-  const token = localStorage.getItem("token");
-  return {
-    Authorization: `Bearer ${token}`,
-  };
-};
+// services/requestService.js
+import api from "./api";
 
 export const requestService = {
-  // 🔹 Lấy tất cả request theo productId
   getRequestsByProductId: async (productId) => {
     try {
-      const res = await axios.get(`${API_URL}/requests/product/${productId}`, {
-        headers: getAuthHeaders(),
-      });
-      return res.data.requests;
+      const res = await api.get(`/requests/product/${productId}`);
+      return res.data.requests || [];
     } catch (err) {
-      console.error("Lỗi khi lấy requests:", err.response?.data || err.message);
-      return [];
-    }
-  },
-
-  // 🔹 Gửi request nhận sản phẩm
-  createRequest: async (productId, message = "") => {
-    try {
-      const res = await axios.post(
-        `${API_URL}/requests`,
-        { productId, message },
-        { headers: getAuthHeaders() }
-      );
-      return res.data;
-    } catch (err) {
-      console.error("Lỗi khi tạo request:", err.response?.data || err.message);
+      console.error("Error getting requests:", err.response?.data || err.message);
       throw err;
     }
   },
-
-  // 🔹 Chủ sản phẩm duyệt request
+  
+  createRequest: async ({ productId, message = "" }) => {
+    try {
+      const res = await api.post("/requests", { productId, message });
+      return res.data;
+    } catch (err) {
+      console.error("Error creating request:", err.response?.data || err.message);
+      throw err;
+    }
+  },
+  
   approveRequest: async (requestId) => {
     try {
-      const res = await axios.put(
-        `${API_URL}/requests/approve/${requestId}`,
-        {},
-        { headers: getAuthHeaders() }
-      );
+      const res = await api.post(`/requests/${requestId}/approve`);
       return res.data;
     } catch (err) {
-      console.error("Lỗi khi duyệt request:", err.response?.data || err.message);
+      console.error("Error approving request:", err.response?.data || err.message);
       throw err;
     }
   },
-
-  // 🔹 Kiểm tra trạng thái yêu cầu của user hiện tại
+  
+  // Add reject and cancel methods
+  rejectRequest: async (requestId) => {
+    try {
+      const res = await api.post(`/requests/${requestId}/reject`);
+      return res.data;
+    } catch (err) {
+      console.error("Error rejecting request:", err.response?.data || err.message);
+      throw err;
+    }
+  },
+  
+  cancelRequest: async (requestId) => {
+    try {
+      const res = await api.post(`/requests/${requestId}/cancel`);
+      return res.data;
+    } catch (err) {
+      console.error("Error canceling request:", err.response?.data || err.message);
+      throw err;
+    }
+  },
+  
   checkRequestStatus: async (productId) => {
     try {
-      const res = await axios.get(`${API_URL}/requests/status/${productId}`, {
-        headers: getAuthHeaders(),
-      });
-      return res.data; // { status: 'none' | 'pending' | 'approved' | ... }
+      const res = await api.get(`/requests/status/${productId}`);
+      return res.data;
     } catch (err) {
-      console.error("Lỗi khi kiểm tra trạng thái:", err.response?.data || err.message);
-      return { status: "none" };
+      console.error("Error checking request status:", err.response?.data || err.message);
+      throw err;
     }
   },
-    // 🔹 Lấy danh sách quà đã nhận
+  
   getReceivedGifts: async () => {
     try {
-      const res = await axios.get(`${API_URL}/requests/received-gifts`, {
-        headers: getAuthHeaders(),
-      });
-      return res.data.gifts;
+      const res = await api.get("/requests/received");
+      return res.data || [];
     } catch (err) {
-      console.error("Lỗi khi lấy quà đã nhận:", err.response?.data || err.message);
-      return [];
+      console.error("Error getting received gifts:", err.response?.data || err.message);
+      throw err;
     }
   },
-
-  // 🔹 Lấy danh sách quà đã tặng
+  
   getGivenGifts: async () => {
     try {
-      const res = await axios.get(`${API_URL}/requests/given-gifts`, {
-        headers: getAuthHeaders(),
-      });
-      return res.data.gifts;
+      const res = await api.get("/requests/given");
+      return res.data || [];
     } catch (err) {
-      console.error("Lỗi khi lấy quà đã tặng:", err.response?.data || err.message);
-      return [];
+      console.error("Error getting given gifts:", err.response?.data || err.message);
+      throw err;
     }
-  },
+  }
 };
