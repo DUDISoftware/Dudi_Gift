@@ -2,12 +2,14 @@
 import React, { useState, useEffect } from "react";
 import { useNotifications } from "../context/NotificationContext";
 import ProductDetailPopup from "../../views/user/Profile/ProductDetailPopup";
+import ContactInfoPopup from "./ContactInfoPopup"; // Thêm component mới
 import Bell from "../assets/img/bell.png";
 
 const NotificationBell = () => {
   const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotifications();
   const [open, setOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [selectedOwner, setSelectedOwner] = useState(null); // Thêm state cho chủ sản phẩm
 
   // ✅ Debug log khi notifications thay đổi
   useEffect(() => {
@@ -24,7 +26,14 @@ const NotificationBell = () => {
 
   const handleClickNotification = (n) => {
     if (!n.isRead) markAsRead(n._id);
-    if (n.product) {
+    
+    // Nếu là thông báo được duyệt (approve) -> hiển thị thông tin liên hệ chủ sản phẩm
+    if (n.type === "approve" && n.product && n.product.user_id) {
+      setSelectedOwner(n.product.user_id);
+      setOpen(false);
+    } 
+    // Nếu là các loại thông báo khác -> hiển thị thông tin sản phẩm như bình thường
+    else if (n.product) {
       setSelectedProduct(n.product);
       setOpen(false);
     }
@@ -102,6 +111,13 @@ const NotificationBell = () => {
                         Sản phẩm: {n.product.title}
                       </p>
                     )}
+
+                    {/* Hiển thị loại thông báo */}
+                    <p className="text-xs text-gray-400 mt-1">
+                      Loại: {n.type === 'approve' ? 'Được duyệt' : 
+                            n.type === 'request' ? 'Yêu cầu' : 
+                            n.type === 'reject' ? 'Từ chối' : n.type}
+                    </p>
                   </div>
                   
                   {!n.isRead && (
@@ -123,6 +139,14 @@ const NotificationBell = () => {
         <ProductDetailPopup
           product={selectedProduct}
           onClose={() => setSelectedProduct(null)}
+        />
+      )}
+
+      {/* Contact info popup - Hiển thị khi được duyệt */}
+      {selectedOwner && (
+        <ContactInfoPopup
+          owner={selectedOwner}
+          onClose={() => setSelectedOwner(null)}
         />
       )}
     </div>

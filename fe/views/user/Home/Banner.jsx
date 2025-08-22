@@ -31,6 +31,7 @@ const Banner = () => {
 
         <div className="flex-1 flex justify-center md:justify-end">
           <img
+          rel='preload'
             src={Image}
             alt="Banner"
             className="w-full max-w-xs sm:max-w-sm md:max-w-md h-auto object-cover rounded-lg"

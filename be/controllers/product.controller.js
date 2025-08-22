@@ -52,7 +52,7 @@ exports.createProduct = async (req, res) => {
       quality,
       status,
       delivery_method,
-      user_id, // ✅ dùng đúng user
+      user_id,
       image_url: mainImage,
       sub_images_urls: subImages,
     });
